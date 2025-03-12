@@ -1,0 +1,8 @@
+package com.bridgelabz.address_book.repo;
+import com.bridgelabz.address_book.entity.AddressBook;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AddressBookRepository extends JpaRepository<AddressBook, Long> {
+}
