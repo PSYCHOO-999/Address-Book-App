@@ -1,9 +1,8 @@
-package com.bridgelabz.address_book.services;
+package com.bridgelabz.address_book.service;
+
 import com.bridgelabz.address_book.dto.AddressBookDTO;
 import com.bridgelabz.address_book.entity.AddressBook;
 import com.bridgelabz.address_book.repo.AddressBookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,30 +11,42 @@ import java.util.Optional;
 @Service
 public class AddressBookService {
 
-    @Autowired
-    private AddressBookRepository repository;
+    private final AddressBookRepository repository;
 
-    public ResponseEntity<String> addEntry(AddressBookDTO dto) {
-        AddressBook entry = new AddressBook(dto.getName(), dto.getPhoneNumber());
-        repository.save(entry);
-        return ResponseEntity.ok("Entry added successfully");
+    public AddressBookService(AddressBookRepository repository) {
+        this.repository = repository;
     }
 
-    public ResponseEntity<List<AddressBook>> getAllEntries() {
-        return ResponseEntity.ok(repository.findAll());
+    public AddressBook addEntry(AddressBookDTO addressBookDTO) {
+        AddressBook newEntry = new AddressBook();
+        newEntry.setName(addressBookDTO.getName());
+        newEntry.setPhoneNumber(addressBookDTO.getPhoneNumber());
+        newEntry.setEmail(addressBookDTO.getEmail()); // Ensure Email is Set
+        return repository.save(newEntry);
     }
 
-    public ResponseEntity<?> getEntryById(Long id) {
-        Optional<AddressBook> entry = repository.findById(id);
-        return entry.<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).body("Entry not found"));
+    public List<AddressBook> getAllEntries() {
+        return repository.findAll();
     }
 
-    public ResponseEntity<String> deleteEntry(Long id) {
+    public Optional<AddressBook> getEntryById(Long id) {
+        return repository.findById(id);
+    }
+
+    public Optional<AddressBook> updateEntry(Long id, AddressBookDTO addressBookDTO) {
+        return repository.findById(id).map(existingEntry -> {
+            existingEntry.setName(addressBookDTO.getName());
+            existingEntry.setPhoneNumber(addressBookDTO.getPhoneNumber());
+            existingEntry.setEmail(addressBookDTO.getEmail()); // Ensure Email is Updated
+            return repository.save(existingEntry);
+        });
+    }
+
+    public boolean deleteEntry(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
-            return ResponseEntity.ok("Entry deleted successfully");
+            return true;
         }
-        return ResponseEntity.status(404).body("Entry not found");
+        return false;
     }
 }
