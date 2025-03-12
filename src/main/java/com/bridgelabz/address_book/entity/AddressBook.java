@@ -1,32 +1,30 @@
 package com.bridgelabz.address_book.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Entity
 @Getter
 @Setter
-@Data
 @NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "address_book")
 public class AddressBook {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private String phoneNumber;
     private String email;
-    private String phone;
+    private String address;  // Added address field
 
-    @ElementCollection
-    private List<String> addresses;
-
-    public AddressBook(String name, String email, String phone, List<String> addresses) {
+    public AddressBook(String name, String phoneNumber, String email, String address) {
         this.name = name;
+        this.phoneNumber = phoneNumber;
         this.email = email;
-        this.phone = phone;
-        this.addresses = addresses;
+        this.address = address;
     }
 }
