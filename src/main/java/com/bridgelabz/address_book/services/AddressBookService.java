@@ -1,8 +1,9 @@
-package com.bridgelabz.address_book.service;
+package com.bridgelabz.address_book.services;
 
 import com.bridgelabz.address_book.dto.AddressBookDTO;
 import com.bridgelabz.address_book.entity.AddressBook;
 import com.bridgelabz.address_book.repo.AddressBookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,19 +12,8 @@ import java.util.Optional;
 @Service
 public class AddressBookService {
 
-    private final AddressBookRepository repository;
-
-    public AddressBookService(AddressBookRepository repository) {
-        this.repository = repository;
-    }
-
-    public AddressBook addEntry(AddressBookDTO addressBookDTO) {
-        AddressBook newEntry = new AddressBook();
-        newEntry.setName(addressBookDTO.getName());
-        newEntry.setPhoneNumber(addressBookDTO.getPhoneNumber());
-        newEntry.setEmail(addressBookDTO.getEmail()); // Ensure Email is Set
-        return repository.save(newEntry);
-    }
+    @Autowired
+    private AddressBookRepository repository;
 
     public List<AddressBook> getAllEntries() {
         return repository.findAll();
@@ -33,13 +23,27 @@ public class AddressBookService {
         return repository.findById(id);
     }
 
+    public AddressBook addEntry(AddressBookDTO addressBookDTO) {
+        AddressBook addressBook = new AddressBook(
+                addressBookDTO.getName(),
+                addressBookDTO.getEmail(),
+                addressBookDTO.getPhone(),
+                addressBookDTO.getAddresses()
+        );
+        return repository.save(addressBook);
+    }
+
     public Optional<AddressBook> updateEntry(Long id, AddressBookDTO addressBookDTO) {
-        return repository.findById(id).map(existingEntry -> {
-            existingEntry.setName(addressBookDTO.getName());
-            existingEntry.setPhoneNumber(addressBookDTO.getPhoneNumber());
-            existingEntry.setEmail(addressBookDTO.getEmail()); // Ensure Email is Updated
-            return repository.save(existingEntry);
-        });
+        Optional<AddressBook> existingEntry = repository.findById(id);
+        if (existingEntry.isPresent()) {
+            AddressBook addressBook = existingEntry.get();
+            addressBook.setName(addressBookDTO.getName());
+            addressBook.setEmail(addressBookDTO.getEmail());
+            addressBook.setPhone(addressBookDTO.getPhone());
+            addressBook.setAddresses(addressBookDTO.getAddresses());
+            return Optional.of(repository.save(addressBook));
+        }
+        return Optional.empty();
     }
 
     public boolean deleteEntry(Long id) {
