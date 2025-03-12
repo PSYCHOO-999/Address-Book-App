@@ -1,24 +1,14 @@
-package com.bridgelabz.address_book.entity;
-import jakarta.persistence.*;
+package com.bridgelabz.address_book.dto;
 
-@Entity
-@Table(name = "address_book")
-public class AddressBook {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AddressBookDTO {
     private String name;
     private String phoneNumber;
 
-    public AddressBook() {}
+    public AddressBookDTO() {}
 
-    public AddressBook(String name, String phoneNumber) {
+    public AddressBookDTO(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
