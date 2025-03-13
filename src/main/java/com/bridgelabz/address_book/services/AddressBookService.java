@@ -1,4 +1,4 @@
-package com.bridgelabz.address_book.service;
+package com.bridgelabz.address_book.services;
 
 import com.bridgelabz.address_book.dto.AddressBookDTO;
 import com.bridgelabz.address_book.entity.AddressBook;
